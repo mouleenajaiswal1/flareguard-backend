@@ -103,15 +103,16 @@ app.get('/script/:shopDomain.js', async (req, res) => {
 });
 
 // ── Health check (for Render) ─────────────────────────────────
-app.get('/health', (req, res) => {
-  res.json({
-    status:  'ok',
-    version: '2.0.0',
-    uptime:  Math.floor(process.uptime()),
-    env:     process.env.NODE_ENV,
-  });
+// ── Root route — redirect to frontend ────────────────────────
+app.get('/', (req, res) => {
+  const { shop, host } = req.query
+  if (shop) {
+    return res.redirect(
+      `https://flareguard-frontend.onrender.com?shop=${shop}&host=${host || ''}`
+    )
+  }
+  res.redirect('https://flareguard-frontend.onrender.com')
 });
-
 // ── 404 ───────────────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
